@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin') //提取css成�
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin') //压缩css
 const EslintWebpackPlugin = require('eslint-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
+const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
 // const BabelPluginDynamicImportWebpack = require('babel-plugin-dynamic-import-webpack')
 
 const { resolve } = require('path')
@@ -12,6 +13,12 @@ const { resolve } = require('path')
     loader： 1.下载 2.使用
     plugin:  1.下载 2.引入 3.使用
 */
+
+/*
+    PWA: 渐进式网络开发应用程序（离线可访问）
+    workbox --> workbox-webpack-plugin
+*/
+
 /*
     Chunk是Webpack打包过程中，一堆module的集合。我们知道Webpack的打包是从一个入口文件开始，也可以说是入口模块，
     入口模块引用这其他模块，模块再引用模块。Webpack通过引用关系逐个打包模块，这些module就形成了一个Chunk。
@@ -72,11 +79,26 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: 'css/built.[contenthash:10].css'
         }),
+        new WorkboxWebpackPlugin.GenerateSW({
+            /*
+                1.帮助serviceworker快速启动
+                2.删除旧的 serviceworker
+
+                打包后生成一个 serviceworker 配置文件
+            */
+            clientsClaim: true,
+            skipWaiting: true
+        })
         /*
             语法检查： eslint-webpack-plugin eslint
             注意：只检查自己的代码，不检查第三方库
             检查规则在package.json中eslintConfig中设置
             airbnb -> eslint-config-airbnb-base eslint eslint-plugin-import
+            eslint 不认识 window navigator全局变量
+                解决：需要修改package.json中eslintConfig配置
+                "env": {
+                    "browser": true //支持浏览器端全局变量
+                }
         */
         // new EslintWebpackPlugin({
         //     fix: true
