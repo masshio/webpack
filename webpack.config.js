@@ -3,8 +3,9 @@ var webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin') //提取css成单独文件
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin') //压缩css
-const EslintWebpackPlugin = require('eslint-webpack-plugin');
+const EslintWebpackPlugin = require('eslint-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
+// const BabelPluginDynamicImportWebpack = require('babel-plugin-dynamic-import-webpack')
 
 const { resolve } = require('path')
 /*
@@ -43,12 +44,18 @@ const { resolve } = require('path')
 // process.env.NODE_ENV = 'development'
 
 module.exports = {
-    entry : ['./src/main.js', './index.html'],
+    // 单入口
+    entry: ['./src/main.js', './index.html'],
+    // entry : {
+    //     // 多入口： 有一个入口，最终输出就有一个bundle
+    //     main: ['./src/main.js','./index.html'],
+    //     math: './src/js/mathUtil.js',
+    // },
     output: {
         //输出路径
         path: path.resolve(__dirname,'dist'),
         //输出文件名
-        filename:'js/bundle.[contenthash:10].js',
+        filename:'js/[name].[contenthash:10].js',
         assetModuleFilename: 'images/[hash:10][ext]'
     },
     plugins:[
@@ -71,17 +78,24 @@ module.exports = {
             检查规则在package.json中eslintConfig中设置
             airbnb -> eslint-config-airbnb-base eslint eslint-plugin-import
         */
-        new EslintWebpackPlugin({
-            fix: true
-        })
+        // new EslintWebpackPlugin({
+        //     fix: true
+        // })
     ],
     optimization: {
+        minimize: true,
         minimizer: [
             new CssMinimizerWebpackPlugin(),
             // 配置了minimizer后，就表示开发者在自定义压缩插件，内部的js压缩器就会被覆盖掉
             new TerserWebpackPlugin()
         ],
-        minimize: true
+        /*
+            1. 可以将node_modules中代码单独打包一个chunk最终输出
+            2. 自动分析多入口chunk中，有没有公共的文件。如果有会打包成一个单独的chunk
+        */
+        splitChunks: {
+            chunks: 'all'
+        }
     },
     module: {
         rules:[
@@ -199,8 +213,8 @@ module.exports = {
             }
         ]
     },
-    // mode: 'development',
-    mode: 'production',
+    mode: 'development',
+    // mode: 'production',
 
     // 开发服务器 devServer: 用来自动化(自动编译)
     // 特点： 只会在内存中编译打包，不会有任何输出
