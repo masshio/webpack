@@ -3,14 +3,18 @@ var webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin') //提取css成单独文件
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin') //压缩css
-const EslintWebpackPlugin = require('eslint-webpack-plugin')
+const EslintWebpackPlugin = require('eslint-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin')
 
 const { resolve } = require('path')
 /*
     loader： 1.下载 2.使用
     plugin:  1.下载 2.引入 3.使用
 */
-
+/*
+    Chunk是Webpack打包过程中，一堆module的集合。我们知道Webpack的打包是从一个入口文件开始，也可以说是入口模块，
+    入口模块引用这其他模块，模块再引用模块。Webpack通过引用关系逐个打包模块，这些module就形成了一个Chunk。
+*/
 /*
     缓存：
         babel缓存
@@ -21,6 +25,19 @@ const { resolve } = require('path')
                       如果重新打包，会导致所有缓存失效。（可能我只改动一个文件）
             chunkhash：根据chunk生成的hash值。如果打包来源于同一个chunk，那么hash值就一样
                 问题：js和css的hash值还是一样的
+                    因为css是在js中被引入的，所以同属于一个chunk
+            contenthash: 根据文件的内容生成hash值。不同文件hash值一定不一样
+*/
+
+/*
+    tree shaking: 去除无用代码
+        前提： 1.必须使用ES6模块化 2.开启production环境
+        作用：减少代码体积
+
+    在package.json中配置
+        "sideEffects": false 所有代码都没有副作用（都可以进行tree shaking)
+            问题： 可能会把css @babel/polyfill 文件干掉
+        "sideEffects": ["*.css", "*.less"]
 */
 
 // process.env.NODE_ENV = 'development'
@@ -31,7 +48,7 @@ module.exports = {
         //输出路径
         path: path.resolve(__dirname,'dist'),
         //输出文件名
-        filename:'js/bundle.[chunkhash:10].js',
+        filename:'js/bundle.[contenthash:10].js',
         assetModuleFilename: 'images/[hash:10][ext]'
     },
     plugins:[
@@ -46,7 +63,7 @@ module.exports = {
             }
         }),
         new MiniCssExtractPlugin({
-            filename: 'css/built.[chunkhash:10].css'
+            filename: 'css/built.[contenthash:10].css'
         }),
         /*
             语法检查： eslint-webpack-plugin eslint
@@ -61,6 +78,8 @@ module.exports = {
     optimization: {
         minimizer: [
             new CssMinimizerWebpackPlugin(),
+            // 配置了minimizer后，就表示开发者在自定义压缩插件，内部的js压缩器就会被覆盖掉
+            new TerserWebpackPlugin()
         ],
         minimize: true
     },
@@ -180,8 +199,8 @@ module.exports = {
             }
         ]
     },
-    mode: 'development',
-    // mode: 'production',
+    // mode: 'development',
+    mode: 'production',
 
     // 开发服务器 devServer: 用来自动化(自动编译)
     // 特点： 只会在内存中编译打包，不会有任何输出

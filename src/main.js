@@ -1,8 +1,11 @@
 import print from './js/print';
 
-const { add, mul } = require('./js/mathUtil');
+import { mul } from './js/mathUtil';
+import './css/body.css';
+import './css/index.less';
+import './iconfont/iconfont.css';
 
-console.log(add(20, 30));
+// console.log(add(20, 30));
 console.log(mul(20, 30));
 
 const promise = new Promise((resolve) => {
@@ -10,9 +13,6 @@ const promise = new Promise((resolve) => {
 });
 print();
 console.log(promise);
-require('./css/body.css');
-require('./css/index.less');
-require('./iconfont/iconfont.css');
 
 if (module.hot) {
   // 一旦module.hot为true， 说明开启了HMR功能 --> 让HMR功能代码生效
