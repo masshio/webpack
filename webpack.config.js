@@ -272,6 +272,10 @@ module.exports = {
         */
         hot: true,
     },
+    externals:{
+        // 拒绝jQuery被打包进来
+        jquery: 'jQuery'
+    },
     target: 'web',
     devtool: 'source-map'
     /*
