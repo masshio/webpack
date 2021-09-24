@@ -124,7 +124,14 @@ module.exports = {
         minimizer: [
             new CssMinimizerWebpackPlugin(),
             // 配置了minimizer后，就表示开发者在自定义压缩插件，内部的js压缩器就会被覆盖掉
-            new TerserWebpackPlugin()
+            new TerserWebpackPlugin({
+                // 开启缓存
+                cache: true,
+                // 开启多进程打包
+                parallel: true,
+                // 启动source-map
+                scourceMap: true
+            })
         ],
         /*
             1. 可以将node_modules中代码单独打包一个chunk最终输出
