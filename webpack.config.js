@@ -60,12 +60,27 @@ module.exports = {
     // },
     output: {
         //输出路径
-        path: path.resolve(__dirname,'dist'),
+        path: path.resolve(__dirname, 'dist'),
         //输出文件名
-        filename:'js/[name].[contenthash:10].js',
-        assetModuleFilename: 'images/[hash:10][ext]'
+        filename: 'js/[name].[contenthash:10].js',
+        assetModuleFilename: 'images/[hash:10][ext]',
+        // 所有资源引入公共路径前缀 --> 'imgs/a.jpg' --> '/imgs/a.jpg'
+        publicPath: '/',
+        chunkFilename: 'js/[name]_chunk.js', // 指定非入口chunk的名称
+        library: '[name]', // 打包整个库后向外暴露的变量名
+        libraryTarget: 'window' // 变量名添加到哪个上 browser：window
+        // libraryTarget: 'global' // node：global
+        // libraryTarget: 'commonjs' // conmmonjs模块 exports
     },
-    plugins:[
+    resolve: {
+        // 配置解析模块路径别名： 优点简写路径 缺点路径没有提示
+        alias: {
+            $css : path.resolve(__dirname,'src/css')
+        },
+        // 配置省略文件路径的后缀名 
+        extensions: ['.js', 'json']
+    },
+    plugins: [
         new webpack.BannerPlugin('最终版权'),
         // 默认创建空的html文件，自动引入打包输出的所有资源（js/css)
         new HtmlWebpackPlugin({
@@ -120,7 +135,7 @@ module.exports = {
         }
     },
     module: {
-        rules:[
+        rules: [
             //详细的loader配置
             {
                 // oneOf提升性能，不用oneOf每个loader都会过一遍
@@ -272,7 +287,7 @@ module.exports = {
         */
         hot: true,
     },
-    externals:{
+    externals: {
         // 拒绝jQuery被打包进来
         jquery: 'jQuery'
     },
