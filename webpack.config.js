@@ -128,9 +128,9 @@ module.exports = {
                 // 开启缓存
                 cache: true,
                 // 开启多进程打包
-                parallel: true,
+                // parallel: true,
                 // 启动source-map
-                scourceMap: true
+                sourceMap: true
             })
         ],
         /*
