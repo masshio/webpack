@@ -78,7 +78,7 @@ module.exports = {
             $css : path.resolve(__dirname,'src/css')
         },
         // 配置省略文件路径的后缀名 
-        extensions: ['.js', 'json']
+        extensions: ['.js', '.json']
     },
     plugins: [
         new webpack.BannerPlugin('最终版权'),
@@ -126,11 +126,11 @@ module.exports = {
             // 配置了minimizer后，就表示开发者在自定义压缩插件，内部的js压缩器就会被覆盖掉
             new TerserWebpackPlugin({
                 // 开启缓存
-                cache: true,
+                // cache: true,
                 // 开启多进程打包
                 // parallel: true,
                 // 启动source-map
-                sourceMap: true
+                // sourceMap: true
             })
         ],
         /*
@@ -234,6 +234,9 @@ module.exports = {
                                 只有工作消耗时间比较长，才需要多进程打包
                             */
                             // 'thread-loader',
+                            /*
+                                @babel/core, @babel/preset-env, babel-loader, core-js
+                            */
                             {
                                 loader: 'babel-loader',
                                 options: {
@@ -241,7 +244,7 @@ module.exports = {
                                         [
                                             '@babel/preset-env',
                                             {
-                                                // 按需加载
+                                                // 使用core-js的方式：按需加载
                                                 useBuiltIns: 'usage',
                                                 // 指定core-js版本
                                                 corejs: {
@@ -270,7 +273,7 @@ module.exports = {
     mode: 'development',
     // mode: 'production',
 
-    // 开发服务器 devServer: 用来自动化(自动编译)
+    // 开发服务器 devServer: 用来自动化(自动编译) webpack-dev-server
     // 特点： 只会在内存中编译打包，不会有任何输出
     // 启动devServer指令为：npx webpack server
     devServer: {
@@ -278,7 +281,7 @@ module.exports = {
         contentBase: resolve(__dirname, 'dist'),
         // 启动gzip压缩
         compress: true,
-        port: 3000,
+        port: 3002,
         // 自动打开浏览器
         open: true,
         // 开启HMR
