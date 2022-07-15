@@ -1,6 +1,7 @@
-const express = require('express')
-const app = express()
+const express = require('express');
 
-app.use(express.static('dist', { maxAge: 1000 * 3600 }))
+const app = express();
 
-app.listen(3000)
+app.use(express.static('dist', { maxAge: 1000 * 3600 }));
+
+app.listen(3000);
